@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Price Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            background-image: url('/static/house.jpg');
+            background-size: cover;
+            background-position: center;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>House Price Predictor</h1>
+        <form id="predict-form">
+            <label for="sqft">Square Feet:</label>
+            <input type="number" id="sqft" name="sqft" required><br><br>
+
+            <label for="bedrooms">Bedrooms:</label>
+            <input type="number" id="bedrooms" name="bedrooms" required><br><br>
+
+            <label for="bathrooms">Bathrooms:</label>
+            <input type="number" id="bathrooms" name="bathrooms" required><br><br>
+
+            <button type="submit" id="predict-btn">Predict Price</button>
+        </form>
+
+        <div id="result" style="display:none;">
+            <h3>Predicted Price:</h3>
+            <p id="predicted-price"></p>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#predict-form').submit(function(event) {
+                event.preventDefault();
+                
+                $.ajax({
+                    type: 'POST',
+                    url: '/predict',
+                    data: $('#predict-form').serialize(),
+                    success: function(response) {
+                        $('#predicted-price').text('$' + response.predicted_price.toFixed(2));
+                        $('#result').show();
+                    },
+                    error: function(error) {
+                        console.log(error);
+                        alert('Error predicting price. Please try again.');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
